@@ -1,0 +1,14 @@
+{
+  "eradicate": true,
+  "checkers-whitelist-path-regex": [
+    "src",
+    "ideabuck"
+  ],
+  "checkers-blacklist-path-regex": [
+    "src/com/facebook/buck/jvm/java/runner",
+    "src/com/facebook/buck/testrunner",
+    "src-gen"
+  ],
+  "skip-duplicated-types": false,
+  "keep-going": false
+}

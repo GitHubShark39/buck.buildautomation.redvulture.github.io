@@ -1,0 +1,52 @@
+apple_resource(
+  name = 'DemoAppResources',
+  files = glob(['*.xib','*.storyboard']),
+  dirs = [],
+)
+
+core_data_model(
+  name = 'DemoAppCoreDataModel',
+  path = 'Model.xcdatamodeld',
+)
+
+apple_bundle(
+  name = 'DemoApp',
+  binary = ':DemoAppBinary',
+  deps = [':DemoAppCoreDataModel', ':DemoAppSceneKitAssets'],
+  extension = 'app',
+  info_plist = 'Info.plist',
+)
+
+core_data_model(
+  name = 'DemoAppCoreDataModel2',
+  path = 'Model2.xcdatamodeld',
+)
+
+scene_kit_assets(
+  name = 'DemoAppSceneKitAssets',
+  path = 'DemoApp.scnassets'
+)
+
+apple_binary(
+  name = 'DemoAppBinary',
+  deps = [':DemoAppResources', ':DemoAppCoreDataModel2'],
+  preprocessor_flags = ['-fobjc-arc'],
+  headers = [],
+  srcs = ['AppDelegate.m'],
+  frameworks = [
+    '$SDKROOT/System/Library/Frameworks/UIKit.framework',
+    '$SDKROOT/System/Library/Frameworks/Foundation.framework',
+  ],
+)
+
+apple_test(
+    name = 'AppTest',
+    test_host_app = ':DemoApp',
+    srcs = ['AppTest.m'],
+    info_plist = 'AppTest.plist',
+    frameworks = [
+        '$SDKROOT/System/Library/Frameworks/UIKit.framework',
+        '$SDKROOT/System/Library/Frameworks/Foundation.framework',
+        '$PLATFORM_DIR/Developer/Library/Frameworks/XCTest.framework',
+    ],
+)

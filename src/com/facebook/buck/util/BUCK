@@ -1,0 +1,188 @@
+CONSTANT_SRCS = [
+    "BuckConstant.java",
+]
+
+java_library(
+    name = "constants",
+    srcs = CONSTANT_SRCS,
+    visibility = ["PUBLIC"],
+    deps = [],
+)
+
+EXCEPTION_SRCS = [
+    "ExceptionWithHumanReadableMessage.java",
+    "HumanReadableException.java",
+    "WatchmanWatcherException.java",
+    "RetryingException.java",
+]
+
+java_library(
+    name = "exceptions",
+    srcs = EXCEPTION_SRCS,
+    tests = [
+        "//test/com/facebook/buck/util:util",
+    ],
+    visibility = ["PUBLIC"],
+    deps = ["//third-party/java/jsr:jsr305"],
+)
+
+IO_SRCS = [
+    "AbstractCharsetProcessListener.java",
+    "AbstractDirectoryCleanerArgs.java",
+    "AnsiEnvironmentChecking.java",
+    "BestCompressionGZIPOutputStream.java",
+    "DefaultFilteredDirectoryCopier.java",
+    "DirectoryCleaner.java",
+    "FilteredDirectoryCopier.java",
+    "LineIterating.java",
+    "ListeningCharsetDecoder.java",
+    "ListeningCharsetEncoder.java",
+    "PkillProcessManager.java",
+    "SimpleProcessListener.java",
+    "TimeFormat.java",
+    "UnixUserIdFetcher.java",
+    "UserIdFetcher.java",
+]
+
+java_immutables_library(
+    name = "io",
+    srcs = IO_SRCS,
+    tests = [
+    ],
+    visibility = ["PUBLIC"],
+    deps = [
+        ":exceptions",
+        ":process_executor",
+        ":util",
+        "//src/com/facebook/buck/io:io",
+        "//src/com/facebook/buck/log:api",
+        "//src/com/facebook/buck/util/environment:platform",
+        "//third-party/java/nuprocess:nuprocess",
+    ],
+)
+
+PROCESS_EXECUTOR_SRCS = [
+    "AbstractProcessExecutorParams.java",
+    "AbstractProcessResourceConsumption.java",
+    "Ansi.java",
+    "BgProcessKiller.java",
+    "CapturingPrintStream.java",
+    "Console.java",
+    "ContextualProcessExecutor.java",
+    "DefaultProcessExecutor.java",
+    "DirtyPrintStreamDecorator.java",
+    "ForwardingProcessListener.java",
+    "InputStreamConsumer.java",
+    "Libc.java",
+    "LineFetcher.java",
+    "ListeningProcessExecutor.java",
+    "PrintStreamProcessExecutorFactory.java",
+    "ProcessExecutor.java",
+    "ProcessExecutorSerializer.java",
+    "ProcessExecutorFactory.java",
+    "ProcessHelper.java",
+    "ProcessManager.java",
+    "ProcessRegistry.java",
+    "Threads.java",
+    "Verbosity.java",
+]
+
+java_immutables_library(
+    name = "process_executor",
+    srcs = PROCESS_EXECUTOR_SRCS,
+    tests = [
+    ],
+    visibility = ["PUBLIC"],
+    deps = [
+        ":util",
+        "//src/com/facebook/buck/log:api",
+        "//src/com/facebook/buck/util/concurrent:concurrent",
+        "//src/com/facebook/buck/util/environment:platform",
+        "//third-party/java/jna:jna-platform",
+        "//third-party/java/nuprocess:nuprocess",
+        "//third-party/java/oshi:oshi-core",
+    ],
+)
+
+WATCHMAN_WATCHER_SRCS = [
+    "WatchmanEvent.java",
+    "WatchmanWatcher.java",
+]
+
+java_immutables_library(
+    name = "watchman",
+    srcs = WATCHMAN_WATCHER_SRCS,
+    visibility = ["PUBLIC"],
+    deps = [
+        ":exceptions",
+        ":process_executor",
+        "//src/com/facebook/buck/event:event",
+        "//src/com/facebook/buck/event:interfaces",
+        "//src/com/facebook/buck/event/external:external_lib",
+        "//src/com/facebook/buck/io:io",
+        "//src/com/facebook/buck/io:more-paths",
+        "//src/com/facebook/buck/io:watchman",
+        "//src/com/facebook/buck/log:api",
+    ],
+)
+
+OBJECT_MAPPER_SRCS = [
+    "ObjectMappers.java",
+]
+
+java_library(
+    name = "object_mapper",
+    srcs = OBJECT_MAPPER_SRCS,
+    visibility = [
+        "PUBLIC",
+    ],
+    deps = [
+        ":exceptions",
+        "//third-party/java/jackson:jackson-annotations",
+        "//third-party/java/jackson:jackson-databind",
+        "//third-party/java/jackson:jackson-datatype-guava",
+        "//third-party/java/jackson:jackson-datatype-jdk8",
+    ],
+)
+
+PACKAGED_RESOURCE_SRCS = [
+    "PackagedResource.java",
+]
+
+java_library(
+    name = "packaged_resource",
+    srcs = PACKAGED_RESOURCE_SRCS,
+    visibility = [
+        "PUBLIC",
+    ],
+    deps = [
+        "//src/com/facebook/buck/io:BuckPaths",
+        "//src/com/facebook/buck/io:io",
+        "//src/com/facebook/buck/zip:unzip",
+        "//third-party/java/guava:guava",
+    ],
+)
+
+java_immutables_library(
+    name = "util",
+    srcs = glob(
+        excludes = CONSTANT_SRCS + EXCEPTION_SRCS + IO_SRCS +
+                   WATCHMAN_WATCHER_SRCS + OBJECT_MAPPER_SRCS +
+                   PACKAGED_RESOURCE_SRCS + PROCESS_EXECUTOR_SRCS,
+        includes = ["*.java"],
+    ),
+    tests = [
+        "//test/com/facebook/buck/util:util",
+    ],
+    visibility = [
+        "PUBLIC",
+    ],
+    deps = [
+        ":exceptions",
+        ":object_mapper",
+        "//src/com/facebook/buck/log:api",
+        "//src/com/facebook/buck/model:simple_types",
+        "//src/com/facebook/buck/util/environment:platform",
+        "//third-party/java/jackson:jackson-databind",
+    ],
+)

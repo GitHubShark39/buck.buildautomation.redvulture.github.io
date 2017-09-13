@@ -1,0 +1,58 @@
+EVENT_INTERFACES = [
+    "AbstractBuckEvent.java",
+    "AbstractEventKey.java",
+    "BroadcastEvent.java",
+    "BuckEvent.java",
+    "BuckEventListener.java",
+    "BuckEventBus.java",
+    "EventDispatcher.java",
+    "LeafEvent.java",
+    "WorkAdvanceEvent.java",
+]
+
+java_immutables_library(
+    name = "interfaces",
+    srcs = EVENT_INTERFACES,
+    visibility = ["PUBLIC"],
+    deps = [
+        "//src/com/facebook/buck/event/external:external_lib",
+        "//src/com/facebook/buck/log/views:views",
+        "//src/com/facebook/buck/model:build_id",
+        "//third-party/java/jackson:jackson-annotations",
+    ],
+)
+
+java_immutables_library(
+    name = "event",
+    srcs = glob(
+        ["*.java"],
+        excludes = EVENT_INTERFACES,
+    ),
+    exported_deps = [
+        "//src/com/facebook/buck/event/external:external_lib",
+    ],
+    provided_deps = [
+        # Event API is loaded by the bootstrapper at runtime; don't need to depend on it strongly
+        "//src/com/facebook/buck/event/api:api",
+    ],
+    tests = [
+        "//test/com/facebook/buck/event:event",
+    ],
+    visibility = ["PUBLIC"],
+    deps = [
+        ":interfaces",
+        "//src/com/facebook/buck/event/external:external_lib",
+        "//src/com/facebook/buck/log:api",
+        "//src/com/facebook/buck/log:log",
+        "//src/com/facebook/buck/log/views:views",
+        "//src/com/facebook/buck/model:build_id",
+        "//src/com/facebook/buck/model:model",
+        "//src/com/facebook/buck/rules:rule_key",
+        "//src/com/facebook/buck/timing:timing",
+        "//src/com/facebook/buck/util:process_executor",
+        "//src/com/facebook/buck/util:util",
+        "//src/com/facebook/buck/util/concurrent:concurrent",
+        "//third-party/java/jackson:jackson-annotations",
+        "//third-party/java/jackson:jackson-databind",
+    ],
+)

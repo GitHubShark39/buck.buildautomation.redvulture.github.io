@@ -1,0 +1,52 @@
+{namespace android_common}
+
+/***/
+{template .manifest_apk_arg}
+{call buck.arg}
+  {param name: 'manifest' /}
+  {param desc}
+    Relative path to the Android manifest for the APK.  The common
+    case is that the manifest will be in the same directory as the
+    rule, in which case this will simply be
+    {sp}<code>'AndroidManifest.xml'</code>, but it can also reference
+    an {call buck.android_manifest /} rule.
+  {/param}
+{/call}
+{/template}
+
+/***/
+{template .deps_apk_arg}
+{call buck.arg}
+  {param name : 'deps' /}
+  {param default : '[]' /}
+  {param desc}
+  List of build targets whose corresponding compiled Java code,
+  Android resources, and native libraries will be included in the APK.
+  From the transitive closure of these dependencies, the outputs of rules of the following type will be included in the APK:
+  <ul>
+    <li><code>android_library()</code>
+    <li><code>android_resource()</code>
+    <li><code>cxx_library()</code>
+    <li><code>groovy_library()</code>
+    <li><code>java_library()</code>
+    <li><code>java_binary()</code>
+    <li><code>prebuilt_jar()</code>
+    <li><code>ndk_library()</code>
+    <li><code>prebuilt_native_library()</code>
+  </ul>
+  {/param}
+{/call}
+{/template}
+
+/**
+ * @param type Either a library or a resource
+ */
+{template .manifest_arg}
+{call buck.arg}
+  {param name: 'manifest' /}
+  {param default: 'None' /}
+  {param desc}
+  An optional <a href="http://developer.android.com/guide/topics/manifest/manifest-intro.html">Android Manifest</a> for the {$type} to declare any permissions or intents it may need or want to handle.  May either be a file or a {call buck.android_manifest /} target.
+  {/param}
+{/call}
+{/template}

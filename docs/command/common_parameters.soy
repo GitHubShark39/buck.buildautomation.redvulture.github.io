@@ -1,0 +1,116 @@
+{namespace buck.commonparameters}
+
+/***/
+{template .soyweb}
+  {call buck.page}
+    {param title: 'Common Parameters' /}
+    {param navid: 'command_common_parameters' /}
+    {param description}
+      Command line parameters that affect all commands.
+    {/param}
+    {param content}
+
+
+{call buck.command}
+{param overview}
+
+<p>Some command line parameters affect the operation of Buck itself, regardless
+of which subcommand is being run.
+
+<pre>buck targets --verbose 10</pre>
+</p>
+{/param}
+
+{param params}
+
+{call buck.param}
+  {param name: 'verbose' /}
+  {param desc}
+Sets the verbosity level of the console output.
+  {/param}
+{/call}
+
+{call buck.param}
+  {param name: 'no-cache' /}
+  {param desc}
+Disables the build artifact cache.
+  {/param}
+{/call}
+
+{call buck.param}
+  {param name: 'config' /}
+  {param desc}
+Overrides settings specified in {call buck.concept_buckconfig /}.
+<p>
+<pre>buck build --config cache.mode=dir ...</pre>
+</p>
+
+<p>Note that overriding values of <code>.buckconfig</code> from the command line
+makes reproducing the build very hard. The preferred method of overriding values
+of <code>.buckconfig</code> is via <code>.buckconfig.local</code>.
+</p>
+  {/param}
+{/call}
+
+{call buck.param}
+  {param name: 'num-threads' /}
+  {param desc}
+
+  The number of threads that buck should use when executing jobs.
+  This defaults to 1.25 times the number of processors in the
+  system (on systems with hyperthreading, this means that each core is
+  counted twice). The number of threads to use for building can also
+  be set by adding a "<code>threads</code>" key to the{sp}
+  "<code>build</code>" section of the <code>.buckconfig</code> file.
+
+  The order of precedence for setting the number of builds threads
+  (from highest to lowest) is: command line option,{sp}
+  <code>.buckconfig</code> setting, default value.
+
+  The number of active threads may not always be equal to this
+  argument.
+ {/param}
+{/call}
+
+{call buck.param}
+  {param name: '@/path/to/commandline-args' /}
+  {param nodash: true /}
+  {param desc}
+Additional command line arguments can be stored in external files, one argument per line.
+These arguments can also be <code>@</code> arguments, which will include a second file's
+contents as arguments.
+
+{literal}<pre class = "prettyprint lang-ini">
+# File config/common
+--verbose
+
+# File config/gcc
+@config/common
+--config
+cxx.cxx=/usr/bin/g++
+...
+
+# File config/clang
+@config/common
+--config
+cxx.cxx=/usr/bin/clang++
+...
+
+buck build @config/gcc foo/bar:
+buck build @config/clang foo/bar:
+</pre>{/literal}
+
+<p>
+If Buck is regularly invoked with different sets of arguments, this is the 
+preferred approach, as argument files can be stored in source control, making builds
+more reproducible.
+</p>
+  {/param}
+{/call}
+
+{/param}
+
+{/call}
+    {/param}  // content
+  {/call} // buck.page
+{/template}

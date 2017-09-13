@@ -1,0 +1,185 @@
+{namespace buck.targets}
+
+/***/
+{template .soyweb}
+  {call buck.page}
+    {param title: 'buck targets' /}
+    {param navid: 'command_targets' /}
+    {param description}
+      A command that lists all the available build targets in the current
+      project.
+    {/param}
+    {param content}
+
+
+{call buck.command}
+{param overview}
+Lists the build targets available in the current project.
+
+<p>
+
+The following will print all build targets in the project (sorted
+ alphabetically) to standard out:
+
+<pre>buck targets</pre>
+
+This command can be handy in programmatic tasks, such as running all of the
+Java tests under <code>&#x2F;/java/com/myproject</code>:
+
+{literal}<pre>
+buck targets --type java_test | \
+  grep '&#x2F;/java/com/myproject' | \
+  xargs buck test
+</pre>{/literal}
+
+<p>
+
+A list of rules can also be passed into <code>buck targets</code> and Buck will
+only print out target information for those rules.  For example:
+
+{literal}<pre>
+buck targets --show-output &#x2F;/java/com/myproject:binary
+> &#x2F;/java/com/myproject:binary buck-out/gen/java/com/myproject/binary.apk
+</pre>{/literal}
+
+{/param}
+
+{param params}
+{call buck.param}
+  {param name: 'type' /}
+  {param desc}
+  The types of target to filter by.  For example:
+  <p>
+  <pre>
+    buck targets --type java_test java_binary
+  </pre>
+  {/param}
+{/call}
+
+{call buck.param}
+  {param name: 'referenced-file' /}
+  {param desc}
+  Filters targets by the list of rules that include
+  {sp}<code>referenced-file</code> in their transitive closure.
+
+  <p>
+
+  For example, if a developer wanted to run all tests that could be affected by
+  particular file, they would run:
+  <p>
+{literal}<pre>
+buck targets --type java_test \
+  --referenced-file java/com/example/Foo.java |
+  xargs buck test
+</pre>{/literal}
+  {/param}
+{/call}
+
+{call buck.param}
+  {param name: 'json' /}
+  {param desc}
+  Print JSON representation of each target.
+  
+  <p><p>
+
+  In addition, the JSON includes the list of 'direct_dependencies' for each target, which may include additional
+  dependencies for targets whose descriptions implement ImplicitDepsInferringDescription. The fully qualified
+  names of targets are given.
+
+  <p>
+
+  For example, when resolving a genrule, the direct dependencies includes 
+  both the build targets in 'deps' as well as any build targets in a 
+  script associated with the genrule.
+  {/param}
+{/call}
+
+{call buck.param}
+  {param name: 'output-attributes' /}
+  {param desc}
+  Specify attributes used in JSON representation.
+
+  <p>
+
+  Omitting this option results in showing all attributes.
+
+  {/param}
+{/call}
+
+{call buck.param}
+  {param name: 'print0' /}
+  {param desc}
+  Delimit targets using the ASCII NUL character (when <code>--json</code> is not specified).
+  This facilitates use with <code>xargs</code>:
+  <p>
+{literal}<pre>
+buck targets --print0 | xargs -0 buck build
+</pre>{/literal}
+    {/param}
+  {/call}
+
+{call buck.param}
+  {param name: 'resolve-alias' /}
+  {param desc}
+  Print the fully-qualified build target for the specified alias[es].  This
+  command also accepts build targets.  See  <a
+  href="{ROOT}concept/buckconfig.html"><code>.buckconfig</code></a> for more
+  information.
+  {/param}
+{/call}
+
+{call buck.param}
+  {param name: 'show-output' /}
+  {param desc}
+  Prints the relative path(s) to the output for each rule after the rule name. If the rule generates
+  generated sources as well as producing an output artifact, the output artifact will be printed
+  first, followed by the generated source path (if any).
+  {/param}
+{/call}
+
+{call buck.param}
+  {param name: 'show-target-hash' /}
+  {param desc}
+  Prints each rule's target hash after the rule name. A target hash is created by finding all of the
+  transitive dependencies of the given target and hashing all of their attributes and files they
+  reference. For more details about how the referenced files are hashed see the {sp}
+  <code>--target-hash-file-mode</code> flag. The format of the data that is hashed is undocumented
+  and can change between Buck versions. Target hashes can be used to detect which targets are
+  affected when source files of BUCK files change: if a target is affected, its target hash will
+  be different after the change from what it was before.
+  {/param}
+{/call}
+
+{call buck.param}
+  {param name: 'target-hash-file-mode' /}
+  {param desc}
+  Modifies how target hashes are computed. Can be either <code>PATHS_AND_CONTENTS</code> or {sp}
+  <code>PATHS_ONLY</code>. If set to <code>PATHS_AND_CONTENTS</code> (the default), the contents of
+  all files referenced from the targets will be used to compute the target hash. If set to {sp}
+  <code>PATHS_ONLY</code>, only files' paths contribute to the hash. <code>PATHS_ONLY</code> will
+  generally be faster because it does not need to read all of the referenced files, but it will not
+  detect file changes automatically. See <code>--target-hash-modified-paths</code> for another way
+  to handle changes to referenced files without losing the performance benefits.
+  {/param}
+{/call}
+
+{call buck.param}
+  {param name: 'target-hash-modified-paths' /}
+  {param desc}
+  Modifies how target hashes are computed. This option is only effective when {sp}
+  <code>--target-hash-file-mode</code> is set to <code>PATHS_ONLY</code>, otherwise the actual
+  contents of the files are used to detect modifications and this option is ignored. If a target
+  or its dependencies reference a file from this set, the target's hash will be different than if
+  this option was omitted. Otherwise, the target's hash will be the same as if this option was
+  omitted. This option can be used to detect changes in referenced files if the list of modified
+  files is available from an external source, for example a source control system.
+  {/param}
+{/call}
+
+{/param}
+
+{/call}
+
+    {/param}  // content
+  {/call} // buck.page
+{/template}

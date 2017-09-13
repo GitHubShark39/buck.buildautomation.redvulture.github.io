@@ -1,0 +1,41 @@
+android_build_config(
+  name = 'config1',
+  package = 'com.example.config1',
+)
+
+android_build_config(
+  name = 'config2',
+  package = 'com.example.config2',
+)
+
+android_library(
+  name = 'config-consumer',
+  srcs = [ 'ConfigConsumer.java', ],
+  deps = [
+    ':config1',
+    ':config2',
+  ],
+)
+
+android_binary(
+  name = 'app',
+  manifest = 'AndroidManifest.xml',
+  keystore = '//keystores:debug',
+  deps = [
+    ':config-consumer',
+    '//res/com/sample/base:base',
+  ],
+)
+
+genrule(
+  name = 'extract-classes-dex',
+  bash = ' && '.join([
+    '$(exe //third-party/smali:baksmali) -o $TMP $(location :app)',
+    'find $TMP -name \\*.smali > $OUT',
+  ]),
+  cmd = ' && '.join([
+    '$(exe //third-party/smali:baksmali) -o %TMP% $(location :app)',
+    'for /R %TMP% %i in (*.smali) do echo %i >> %OUT%',
+  ]),
+  out = 'smali-files.txt',
+)

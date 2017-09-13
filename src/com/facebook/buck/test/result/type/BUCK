@@ -1,0 +1,8 @@
+java_library(
+    name = "type",
+    srcs = glob(["*.java"]),
+    visibility = [
+        "PUBLIC",
+    ],
+    deps = [],  # This list is to remain empty. See src/com/facebook/buck/testrunner/BUCK.
+)

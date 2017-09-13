@@ -1,0 +1,83 @@
+android_library(
+  name = 'lib',
+  srcs = glob(['Activity.kt', 'Sample.kt', 'Sample2.kt']),
+  language = 'KOTLIN',
+  deps = [
+    '//res/com/sample/title:title',
+    '//res/com/sample/top:top',
+    '//res/com/sample/asset_only:asset_only',
+  ],
+  visibility = [
+    'PUBLIC',
+  ],
+)
+
+android_library(
+  name = 'lib_using_transitive_empty_res',
+  srcs = glob(['Activity.kt', 'Sample.kt', 'Sample2.kt']),
+  language = 'KOTLIN',
+  deps = [
+    '//res/com/sample/empty_res:empty_res',
+  ],
+  visibility = [
+    'PUBLIC',
+  ],
+)
+
+android_library(
+  name = 'lib_depending_on_main_lib',
+  deps = [
+    ':lib',
+  ],
+  visibility = [
+    'PUBLIC',
+  ],
+)
+
+
+android_library(
+  name = 'lib_extra_kotlinc_arguments',
+  srcs = glob(['Activity.kt', 'Sample.kt', 'Sample2.kt']),
+  language = 'KOTLIN',
+  extra_kotlinc_arguments = [
+    '-Xplugin=',
+  ],
+  deps = [
+    # deps are intentionally left out to fail the test since -Xplugin is not available yet.
+  ],
+  visibility = [
+    'PUBLIC',
+  ],
+)
+
+android_library(
+  name = 'lib_mixed_sources',
+  srcs = glob(['*.kt', 'JavaClass.java']),
+  language = 'KOTLIN',
+  visibility = [
+    'PUBLIC',
+  ],
+)
+
+robolectric_test(
+  name = 'test',
+  srcs = glob(['Activity.kt', 'Sample.kt', 'Sample2.kt']),
+  language = 'KOTLIN',
+  deps = [
+    '//res/com/sample/title:title',
+    '//res/com/sample/top:top',
+    '//res/com/sample/asset_only:asset_only',
+  ],
+  visibility = [
+    'PUBLIC',
+  ],
+)
+
+robolectric_test(
+  name = 'test_mixed_sources',
+  srcs = glob(['*.kt', 'JavaClass.java']),
+  language = 'KOTLIN',
+  visibility = [
+    'PUBLIC',
+  ],
+)

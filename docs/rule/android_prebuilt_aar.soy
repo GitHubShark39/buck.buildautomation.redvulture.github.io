@@ -1,0 +1,89 @@
+{namespace android_prebuilt_aar}
+
+/***/
+{template .soyweb}
+  {call buck.page}
+    {param title: 'android_prebuilt_aar()' /}
+    {param navid: 'rule_android_prebuilt_aar' /}
+    {param prettify: true /}
+    {param description}
+      A rule that takes an .aar file and makes it available as an Android
+      dependency.
+    {/param}
+    {param content}
+
+{call buck.rule}
+{param status: 'FROZEN' /}
+{param overview}
+An <code>android_prebuilt_aar()</code> rule takes an <code>.aar</code> file and
+makes it available as an Android dependency. As expected,
+an {call buck.android_binary /} that transitively depends on
+an <code>android_prebuilt_aar()</code> will include its contents in the generated APK.
+<p>
+<p>
+See the <a href="http://tools.android.com/tech-docs/new-build-system/aar-format">
+official Android documentation</a> for details about the <code>.aar</code> format.
+{/param}
+
+{param args}
+
+{call buck.arg}
+  {param name: 'name' /}
+  {param desc}
+  The name of the rule.
+  {/param}
+{/call}
+
+{call buck.arg}
+  {param name: 'aar' /}
+  {param desc}
+  Path to the <code>.aar</code> file. This may also be a build target to
+  a rule (such as a {call buck.genrule /}) whose output is
+  an <code>.aar</code> file.
+  {/param}
+{/call}
+
+{call buck.arg}
+  {param name: 'source_jar' /}
+  {param default : 'None' /}
+  {param desc}
+  Path to a JAR file that contains the <code>.java</code> files to create
+  the <code>.class</code> in the <code>aar</code>. This is frequently
+  provided for debugging purposes.
+  {/param}
+{/call}
+
+{call buck.arg}
+  {param name: 'javadoc_url' /}
+  {param default : 'None' /}
+  {param desc}
+  URL to the Javadoc for the <code>.class</code> files in the
+  {sp}<code>aar</code>.
+  {/param}
+{/call}
+
+{/param} // close args
+
+{param examples}
+
+{literal}<pre class="prettyprint lang-py">
+android_prebuilt_aar(
+  name = 'play-services',
+  aar = 'play-services-4.0.30.aar',
+  source_jar = 'play-services-4.0.30-sources.jar',
+  javadoc_url = 'file:///opt/android-sdk/extras/google/google_play_services/docs/reference',
+)
+
+android_library(
+  name = 'lib',
+  # This Java code can compile against Play services and reference its resources.
+  srcs = glob(['*.java']),
+  deps = [ ':play-services' ],
+)</pre>{/literal}
+{/param}
+
+{/call} // close buck.rule
+
+    {/param}
+  {/call}
+{/template}

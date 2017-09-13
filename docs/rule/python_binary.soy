@@ -1,0 +1,113 @@
+{namespace python_binary}
+
+/***/
+{template .soyweb}
+  {call buck.page}
+    {param title: 'python_binary()' /}
+    {param navid: 'rule_python_binary' /}
+    {param prettify: true /}
+    {param description}
+      A rule that is used to build a PEX file that includes python sources and
+      resources from all transitive python_library() dependencies.
+    {/param}
+    {param content}
+
+{call buck.rule}
+{param status: 'UNFROZEN' /}
+{param overview}
+A <code>python_binary()</code> rule is used to build a <a href="http://pantsbuild.github.io/pex_design.html">PEX</a> file
+-- an exectuble python package that includes python sources and resources
+from all transitive {call buck.python_library /} dependencies.
+{/param}
+
+{param args}
+
+{call buck.arg}
+  {param name: 'name' /}
+  {param desc}
+  The name of the rule.  The output PEX file will also get this name, with an additional <code>.pex</code> suffix.
+  {/param}
+{/call}
+
+{call buck.arg}
+  {param name: 'main_module' /}
+  {param desc}
+  The module which serves as the entry point for this rule.
+  The <code>__main__.py</code> file of this module will be executed by the interpreter when the PEX file is run.
+  {/param}
+{/call}
+
+{call buck.arg}
+  {param name: 'base_module' /}
+  {param default : 'None' /}
+  {param desc}
+  The package for which the main module should reside under in it's final location
+  in the binary.  If unset, the project relative directory that houses the BUCK file
+  is used.
+  {/param}
+{/call}
+
+{call python_common.platform_arg /}
+
+{call buck.arg}
+  {param name: 'deps' /}
+  {param default : '[]' /}
+  {param desc}
+  {call buck.python_library /} rules to include in the PEX file (including all transitive dependencies).
+  {/param}
+{/call}
+
+{call python_common.preload_deps_arg /}
+
+{call python_common.package_style_arg /}
+
+{call python_common.linker_flags_arg /}
+
+{/param} // close args
+
+{param examples}
+
+{literal}<pre class="prettyprint lang-py">
+python_binary(
+  name = 'tailer',
+  main_module = 'tailer',
+  deps = [
+    ':tailerutils',
+  ],
+)
+
+python_library(
+  name = 'tailerutils',
+  # tailer.py, the main module, should be specified here.
+  srcs = glob(['*.py']),
+)
+</pre>{/literal}
+<p>
+Here is an example of using the `platform` parameter to select the "py2"
+Python platform as defined in `.buckconfig`:
+</p>
+{literal}<pre class="prettyprint lang-ini">
+; .buckconfig
+[python#py2]
+  interpreter = /usr/bin/python2.7
+</pre>{/literal}
+
+{literal}<pre class="prettyprint lang-py">
+# BUCK
+python_binary(
+  name = 'bin',
+  platform = 'py2',
+  main_module = 'main',
+  deps = [
+    ':bar',
+  ],
+)
+</pre>{/literal}
+
+{/param}
+
+{/call} // close buck.rule
+
+    {/param}
+  {/call}
+{/template}
